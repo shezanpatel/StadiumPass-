@@ -1,0 +1,29 @@
+<div class="fixed top-4 right-4 z-[9999] space-y-3 max-w-sm w-full pointer-events-none">
+  <div *ngFor="let toast of toasts$ | async; trackBy: trackById"
+    class="pointer-events-auto flex items-start gap-3 p-4 rounded-2xl border shadow-glass backdrop-blur-glass animate-slide-up"
+    [class]="toast.type === 'success' ? 'bg-sp-green/10 border-sp-green/40'
+           : toast.type === 'error'   ? 'bg-sp-red/10 border-sp-red/40'
+           : toast.type === 'warning' ? 'bg-sp-gold/10 border-sp-gold/40'
+           : 'bg-sp-blue/10 border-sp-blue/40'">
+    <!-- Icon -->
+    <span class="text-xl flex-shrink-0 mt-0.5">
+      {{ toast.type === 'success' ? '✅' : toast.type === 'error' ? '❌' : toast.type === 'warning' ? '⚠️' : 'ℹ️' }}
+    </span>
+    <!-- Content -->
+    <div class="flex-1 min-w-0">
+      <p class="font-display font-bold text-sm"
+        [class]="toast.type === 'success' ? 'text-sp-green'
+               : toast.type === 'error'   ? 'text-sp-red'
+               : toast.type === 'warning' ? 'text-sp-gold'
+               : 'text-sp-blue'">
+        {{ toast.title }}
+      </p>
+      <p class="text-sp-muted text-xs mt-0.5 break-words">{{ toast.message }}</p>
+    </div>
+    <!-- Close -->
+    <button (click)="toastService.remove(toast.id)"
+      class="text-sp-muted hover:text-sp-text text-lg leading-none flex-shrink-0 transition-colors">
+      ×
+    </button>
+  </div>
+</div>

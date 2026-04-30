@@ -1,0 +1,79 @@
+<div class="min-h-screen bg-stadium-gradient flex items-center justify-center px-4 py-12">
+  <!-- Background blobs -->
+  <div class="absolute inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute top-1/4 left-1/3 w-72 h-72 bg-sp-gold/5 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-1/4 right-1/3 w-96 h-96 bg-yellow-500/5 rounded-full blur-3xl"></div>
+  </div>
+
+  <div class="w-full max-w-md relative z-10 animate-fade-in">
+
+    <!-- Logo -->
+    <div class="text-center mb-8">
+      <a routerLink="/" class="inline-flex items-center gap-3">
+        <div class="w-12 h-12 rounded-2xl bg-green-gradient flex items-center justify-center shadow-glow-green">
+          <span class="text-white text-2xl">🏏</span>
+        </div>
+        <h1 class="font-display font-black text-2xl text-sp-text tracking-wider">STADIUM<span class="text-sp-green">PASS</span></h1>
+      </a>
+    </div>
+
+    <div class="bg-sp-glass backdrop-blur-glass border border-sp-gold/30 rounded-3xl p-8 shadow-glass">
+
+      <!-- Header -->
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 rounded-xl bg-sp-gold/10 border border-sp-gold/30 flex items-center justify-center">
+          <span class="text-xl">🛡️</span>
+        </div>
+        <div>
+          <h2 class="font-display font-bold text-2xl text-sp-text">Admin Portal</h2>
+          <p class="text-sp-muted text-xs tracking-widest uppercase">Restricted Access</p>
+        </div>
+      </div>
+
+      <!-- Warning banner -->
+      <div class="flex items-center gap-2 bg-sp-gold/10 border border-sp-gold/20 rounded-xl px-4 py-3 mb-6">
+        <span class="text-sm">⚠️</span>
+        <p class="text-sp-gold text-xs font-semibold">This portal is for authorized administrators only.</p>
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+        <div class="mb-4">
+          <label class="block text-sp-muted text-xs font-semibold uppercase tracking-wider mb-2">Admin Email</label>
+          <input formControlName="email" type="email" placeholder="admin@stadiumpass.in"
+            class="w-full bg-sp-darker border rounded-xl px-4 py-3 text-sp-text placeholder-sp-muted/50 outline-none transition-all text-sm focus:border-sp-gold"
+            [class.border-sp-border]="!emailCtrl.invalid || !emailCtrl.touched"
+            [class.border-sp-red]="emailCtrl.invalid && emailCtrl.touched" />
+          <p *ngIf="emailCtrl.invalid && emailCtrl.touched" class="text-sp-red text-xs mt-1 ml-1">{{ getError(emailCtrl) }}</p>
+        </div>
+
+        <div class="mb-6">
+          <label class="block text-sp-muted text-xs font-semibold uppercase tracking-wider mb-2">Password</label>
+          <div class="relative">
+            <input formControlName="password" [type]="showPassword ? 'text' : 'password'" placeholder="••••••••"
+              class="w-full bg-sp-darker border rounded-xl px-4 py-3 pr-12 text-sp-text placeholder-sp-muted/50 outline-none transition-all text-sm focus:border-sp-gold"
+              [class.border-sp-border]="!passCtrl.invalid || !passCtrl.touched"
+              [class.border-sp-red]="passCtrl.invalid && passCtrl.touched" />
+            <button type="button" (click)="showPassword = !showPassword"
+              class="absolute right-4 top-1/2 -translate-y-1/2 text-sp-muted hover:text-sp-text transition-colors text-lg">
+              {{ showPassword ? '🙈' : '👁️' }}
+            </button>
+          </div>
+          <p *ngIf="passCtrl.invalid && passCtrl.touched" class="text-sp-red text-xs mt-1 ml-1">{{ getError(passCtrl) }}</p>
+        </div>
+
+        <button type="submit" [disabled]="isLoading"
+          class="w-full py-3.5 rounded-xl font-display font-bold text-base tracking-wider transition-all duration-300 bg-sp-gold text-sp-dark shadow-glow-gold hover:opacity-90 hover:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed">
+          <span *ngIf="!isLoading">🛡️ &nbsp;ADMIN SIGN IN</span>
+          <span *ngIf="isLoading">Authenticating...</span>
+        </button>
+      </form>
+
+      <!-- Back to client login -->
+      <p class="text-center text-sp-muted text-sm mt-6">
+        Not an admin?
+        <a routerLink="/login" class="text-sp-green hover:text-sp-green-light font-semibold transition-colors ml-1">Fan login →</a>
+      </p>
+    </div>
+
+  </div>
+</div>

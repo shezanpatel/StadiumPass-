@@ -1,0 +1,121 @@
+<div class="min-h-screen bg-stadium-gradient pt-6 pb-24 px-4">
+  <div class="max-w-4xl mx-auto">
+    <a routerLink="/matches" class="inline-flex items-center gap-2 text-sp-muted hover:text-sp-green text-sm mb-6 transition-colors">← Back</a>
+    <h1 class="font-display font-black text-3xl text-sp-text mb-6 tracking-wide">CHECKOUT</h1>
+
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+      <div class="lg:col-span-3 space-y-4">
+
+        <!-- Payment Method Tabs -->
+        <div class="bg-sp-dark border border-sp-border rounded-2xl p-5">
+          <h3 class="font-display font-bold text-sp-text mb-4 uppercase tracking-wider text-sm">Payment Method</h3>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-5">
+            <button type="button" (click)="setPaymentMethod('credit_card')"
+              [class]="selectedPayment === 'credit_card' ? 'p-3 rounded-xl border-2 border-sp-green bg-sp-green/10 text-sp-green font-semibold text-xs text-center' : 'p-3 rounded-xl border border-sp-border text-sp-muted text-xs text-center hover:border-sp-green hover:text-sp-green transition-all'">
+              <div class="text-xl mb-1">💳</div>Credit Card
+            </button>
+            <button type="button" (click)="setPaymentMethod('debit_card')"
+              [class]="selectedPayment === 'debit_card' ? 'p-3 rounded-xl border-2 border-sp-green bg-sp-green/10 text-sp-green font-semibold text-xs text-center' : 'p-3 rounded-xl border border-sp-border text-sp-muted text-xs text-center hover:border-sp-green hover:text-sp-green transition-all'">
+              <div class="text-xl mb-1">🏦</div>Debit Card
+            </button>
+            <button type="button" (click)="setPaymentMethod('upi')"
+              [class]="selectedPayment === 'upi' ? 'p-3 rounded-xl border-2 border-sp-green bg-sp-green/10 text-sp-green font-semibold text-xs text-center' : 'p-3 rounded-xl border border-sp-border text-sp-muted text-xs text-center hover:border-sp-green hover:text-sp-green transition-all'">
+              <div class="text-xl mb-1">📱</div>UPI
+            </button>
+            <button type="button" (click)="setPaymentMethod('wallet')"
+              [class]="selectedPayment === 'wallet' ? 'p-3 rounded-xl border-2 border-sp-green bg-sp-green/10 text-sp-green font-semibold text-xs text-center' : 'p-3 rounded-xl border border-sp-border text-sp-muted text-xs text-center hover:border-sp-green hover:text-sp-green transition-all'">
+              <div class="text-xl mb-1">👜</div>Wallet
+            </button>
+            <button type="button" (click)="setPaymentMethod('net_banking')"
+              [class]="selectedPayment === 'net_banking' ? 'p-3 rounded-xl border-2 border-sp-green bg-sp-green/10 text-sp-green font-semibold text-xs text-center' : 'p-3 rounded-xl border border-sp-border text-sp-muted text-xs text-center hover:border-sp-green hover:text-sp-green transition-all'">
+              <div class="text-xl mb-1">🌐</div>Net Banking
+            </button>
+          </div>
+
+          <!-- Wallet -->
+          <div *ngIf="selectedPayment === 'wallet'" class="bg-sp-surface rounded-xl p-4 mb-4">
+            <p class="text-sp-muted text-sm">Wallet Balance</p>
+            <p class="font-display font-bold text-2xl" [class]="walletBalance >= total ? 'text-sp-green' : 'text-sp-red'">₹{{ walletBalance | number }}</p>
+            <p *ngIf="walletBalance < total" class="text-sp-red text-xs mt-1">Insufficient balance. Please add ₹{{ (total - walletBalance) | number }}</p>
+          </div>
+
+          <form [formGroup]="paymentForm" (ngSubmit)="onSubmit()" novalidate>
+            <!-- Card Fields -->
+            <div *ngIf="selectedPayment === 'credit_card' || selectedPayment === 'debit_card'" class="space-y-3">
+              <div>
+                <label class="block text-sp-muted text-xs uppercase tracking-wider mb-1.5">Cardholder Name</label>
+                <input formControlName="cardName" type="text" placeholder="Name on card"
+                  class="w-full bg-sp-darker border border-sp-border rounded-xl px-4 py-3 text-sp-text text-sm outline-none focus:border-sp-green transition-colors"/>
+                <p *ngIf="field('cardName').invalid && field('cardName').touched" class="text-sp-red text-xs mt-1">{{ getCardError('cardName') }}</p>
+              </div>
+              <div>
+                <label class="block text-sp-muted text-xs uppercase tracking-wider mb-1.5">Card Number</label>
+                <input formControlName="cardNumber" type="text" placeholder="1234567890123456" maxlength="16"
+                  (input)="formatCardNumber($event)"
+                  class="w-full bg-sp-darker border border-sp-border rounded-xl px-4 py-3 text-sp-text text-sm outline-none focus:border-sp-green transition-colors font-mono tracking-widest"/>
+                <p *ngIf="field('cardNumber').invalid && field('cardNumber').touched" class="text-sp-red text-xs mt-1">{{ getCardError('cardNumber') }}</p>
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-sp-muted text-xs uppercase tracking-wider mb-1.5">Expiry (MM/YY)</label>
+                  <input formControlName="cardExpiry" type="text" placeholder="MM/YY" maxlength="5"
+                    (input)="formatExpiry($event)"
+                    class="w-full bg-sp-darker border border-sp-border rounded-xl px-4 py-3 text-sp-text text-sm outline-none focus:border-sp-green transition-colors font-mono"/>
+                  <p *ngIf="field('cardExpiry').invalid && field('cardExpiry').touched" class="text-sp-red text-xs mt-1">{{ getCardError('cardExpiry') }}</p>
+                </div>
+                <div>
+                  <label class="block text-sp-muted text-xs uppercase tracking-wider mb-1.5">CVV</label>
+                  <input formControlName="cardCvv" type="password" placeholder="•••" maxlength="4"
+                    class="w-full bg-sp-darker border border-sp-border rounded-xl px-4 py-3 text-sp-text text-sm outline-none focus:border-sp-green transition-colors font-mono"/>
+                  <p *ngIf="field('cardCvv').invalid && field('cardCvv').touched" class="text-sp-red text-xs mt-1">{{ getCardError('cardCvv') }}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- UPI -->
+            <div *ngIf="selectedPayment === 'upi'">
+              <label class="block text-sp-muted text-xs uppercase tracking-wider mb-1.5">UPI ID</label>
+              <input formControlName="upiId" type="text" placeholder="yourname@upi"
+                class="w-full bg-sp-darker border border-sp-border rounded-xl px-4 py-3 text-sp-text text-sm outline-none focus:border-sp-green transition-colors"/>
+              <p *ngIf="field('upiId').invalid && field('upiId').touched" class="text-sp-red text-xs mt-1">{{ getCardError('upiId') }}</p>
+            </div>
+
+            <button type="submit" [disabled]="isLoading || (selectedPayment === 'wallet' && walletBalance < total)"
+              class="w-full mt-5 py-4 bg-green-gradient text-white rounded-xl font-display font-bold text-base tracking-wider shadow-glow-green hover:shadow-none hover:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+              <span *ngIf="!isLoading">🔒 PAY ₹{{ total | number }}</span>
+              <span *ngIf="isLoading">Processing Payment...</span>
+            </button>
+            <p class="text-sp-muted text-xs text-center mt-2">🔐 256-bit SSL encrypted. Your data is safe.</p>
+          </form>
+        </div>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="lg:col-span-2 space-y-4">
+        <div class="bg-sp-dark border border-sp-border rounded-2xl p-5 sticky top-4">
+          <h3 class="font-display font-bold text-sp-text mb-4 uppercase tracking-wider text-sm">Order Summary</h3>
+          <div *ngIf="match" class="bg-sp-surface rounded-xl p-3 mb-4">
+            <p class="font-display font-bold text-sp-text text-sm">{{ match.team1 }} vs {{ match.team2 }}</p>
+            <p class="text-sp-muted text-xs mt-1">{{ match.dateTime | date:'dd MMM y, h:mm a' }}</p>
+            <span class="text-xs text-sp-gold mt-1 inline-block">{{ match.tournament }}</span>
+          </div>
+          <div class="space-y-2 mb-4 max-h-40 overflow-y-auto pr-1">
+            <div *ngFor="let s of selectedSeats" class="flex justify-between text-xs">
+              <span class="text-sp-muted font-mono">{{ s.seatId }} ({{ s.tier }})</span>
+              <span class="text-sp-text font-semibold">₹{{ s.price | number }}</span>
+            </div>
+          </div>
+          <div class="border-t border-sp-border pt-3 space-y-2">
+            <div class="flex justify-between text-sm"><span class="text-sp-muted">Subtotal</span><span class="text-sp-text">₹{{ subtotal | number }}</span></div>
+            <div class="flex justify-between text-sm"><span class="text-sp-muted">Convenience fee (2%)</span><span class="text-sp-text">₹{{ convenienceFee | number }}</span></div>
+            <div class="flex justify-between text-sm"><span class="text-sp-muted">GST (18%)</span><span class="text-sp-text">₹{{ taxes | number }}</span></div>
+            <div class="flex justify-between font-display font-bold text-lg border-t border-sp-border pt-2">
+              <span class="text-sp-text">Total</span>
+              <span class="text-sp-green">₹{{ total | number }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

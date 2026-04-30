@@ -1,0 +1,79 @@
+<nav class="sticky top-0 z-40 bg-sp-navy/90 backdrop-blur-glass border-b border-sp-border/50">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="flex items-center justify-between h-16">
+
+      <!-- Logo -->
+      <a [routerLink]="(currentUser$ | async)?.role === 'admin' ? '/admin' : '/'" class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-xl bg-green-gradient flex items-center justify-center shadow-glow-green">
+          <span class="text-white text-sm">🏏</span>
+        </div>
+        <span class="font-display font-black text-xl text-sp-text tracking-wider">STADIUM<span class="text-sp-green">PASS</span></span>
+      </a>
+
+      <!-- Desktop Nav -->
+      <div class="hidden md:flex items-center gap-6" *ngIf="currentUser$ | async as user">
+
+        <!-- Admin nav -->
+        <ng-container *ngIf="user.role === 'admin'">
+          <span class="flex items-center gap-1.5 text-sp-gold text-xs font-bold uppercase tracking-widest border border-sp-gold/30 bg-sp-gold/10 rounded-lg px-3 py-1">
+            🛡️ Admin
+          </span>
+          <a routerLink="/admin" routerLinkActive="text-sp-gold" class="text-sp-muted hover:text-sp-gold text-sm font-semibold transition-colors">Dashboard</a>
+        </ng-container>
+
+        <!-- Client nav -->
+        <ng-container *ngIf="user.role !== 'admin'">
+          <a routerLink="/matches" routerLinkActive="text-sp-green" class="text-sp-muted hover:text-sp-text text-sm font-semibold transition-colors">Matches</a>
+          <a routerLink="/profile" routerLinkActive="text-sp-green" class="text-sp-muted hover:text-sp-text text-sm font-semibold transition-colors">Profile</a>
+          <div class="flex items-center gap-2 bg-sp-surface border border-sp-border rounded-xl px-3 py-1.5">
+            <span class="text-sp-green text-xs font-bold">₹{{ user.walletBalance | number }}</span>
+          </div>
+        </ng-container>
+
+        <button (click)="logout()" class="px-4 py-1.5 border border-sp-border rounded-xl text-sp-muted hover:text-sp-red hover:border-sp-red/50 text-sm font-semibold transition-all">
+          Logout
+        </button>
+      </div>
+
+      <!-- Guest links -->
+      <div class="hidden md:flex items-center gap-3" *ngIf="!(currentUser$ | async)">
+        <a routerLink="/login" class="text-sp-muted hover:text-sp-text text-sm font-semibold transition-colors">Login</a>
+        <a routerLink="/register" class="px-4 py-1.5 bg-green-gradient text-white rounded-xl text-sm font-display font-bold shadow-glow-green hover:shadow-none transition-all">
+          Sign Up
+        </a>
+      </div>
+
+      <!-- Mobile menu btn -->
+      <button class="md:hidden text-sp-muted hover:text-sp-text" (click)="menuOpen = !menuOpen">
+        {{ menuOpen ? '✕' : '☰' }}
+      </button>
+    </div>
+
+    <!-- Mobile menu -->
+    <div *ngIf="menuOpen" class="md:hidden border-t border-sp-border py-4 space-y-3 animate-fade-in">
+      <ng-container *ngIf="currentUser$ | async as user">
+
+        <!-- Admin mobile nav -->
+        <ng-container *ngIf="user.role === 'admin'">
+          <span class="block text-sp-gold text-xs font-bold uppercase tracking-widest py-1">🛡️ Admin Portal</span>
+          <a routerLink="/admin" (click)="menuOpen=false" class="block text-sp-muted hover:text-sp-gold py-2 text-sm font-semibold">Dashboard</a>
+        </ng-container>
+
+        <!-- Client mobile nav -->
+        <ng-container *ngIf="user.role !== 'admin'">
+          <a routerLink="/matches" (click)="menuOpen=false" class="block text-sp-muted hover:text-sp-green py-2 text-sm font-semibold">Matches</a>
+          <a routerLink="/profile" (click)="menuOpen=false" class="block text-sp-muted hover:text-sp-green py-2 text-sm font-semibold">Profile</a>
+        </ng-container>
+
+        <button (click)="logout()" class="block text-sp-red text-sm font-semibold py-2">Logout</button>
+      </ng-container>
+
+      <!-- Guest mobile -->
+      <ng-container *ngIf="!(currentUser$ | async)">
+        <a routerLink="/login" (click)="menuOpen=false" class="block text-sp-muted py-2 text-sm font-semibold">Login</a>
+        <a routerLink="/register" (click)="menuOpen=false" class="block text-sp-green py-2 text-sm font-bold">Sign Up</a>
+      </ng-container>
+    </div>
+
+  </div>
+</nav>

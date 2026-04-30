@@ -1,0 +1,93 @@
+<div class="min-h-screen bg-stadium-gradient overflow-hidden">
+  <!-- Background decorative elements -->
+  <div class="absolute inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute top-20 left-10 w-96 h-96 bg-sp-green/5 rounded-full blur-3xl animate-pulse-slow"></div>
+    <div class="absolute top-40 right-10 w-64 h-64 bg-sp-gold/5 rounded-full blur-3xl animate-pulse-slow" style="animation-delay:1s"></div>
+    <div class="absolute bottom-20 left-1/3 w-80 h-80 bg-sp-blue/5 rounded-full blur-3xl animate-pulse-slow" style="animation-delay:2s"></div>
+    <!-- Decorative cricket lines -->
+    <svg class="absolute inset-0 w-full h-full opacity-[0.02]" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="600" cy="400" r="350" fill="none" stroke="white" stroke-width="1"/>
+      <circle cx="600" cy="400" r="250" fill="none" stroke="white" stroke-width="1"/>
+      <circle cx="600" cy="400" r="150" fill="none" stroke="white" stroke-width="1"/>
+      <line x1="0" y1="400" x2="1200" y2="400" stroke="white" stroke-width="1"/>
+      <line x1="600" y1="0" x2="600" y2="800" stroke="white" stroke-width="1"/>
+    </svg>
+  </div>
+
+  <!-- Hero Section -->
+  <div class="relative z-10 max-w-7xl mx-auto px-4 pt-24 pb-20 text-center">
+    <!-- Badge -->
+    <div class="inline-flex items-center gap-2 bg-sp-green/10 border border-sp-green/30 rounded-full px-4 py-2 mb-8 animate-fade-in">
+      <span class="w-2 h-2 bg-sp-green rounded-full animate-pulse"></span>
+      <span class="text-sp-green text-sm font-semibold">India's #1 Cricket Ticket Platform</span>
+    </div>
+
+    <!-- Headline -->
+    <h1 class="font-display font-black text-5xl sm:text-6xl lg:text-8xl text-sp-text mb-6 leading-none tracking-tight animate-slide-up">
+      YOUR SEAT AT<br>
+      <span class="text-transparent bg-clip-text bg-green-gradient">THE GAME</span>
+    </h1>
+    <p class="text-sp-muted text-lg sm:text-xl max-w-2xl mx-auto mb-10 animate-fade-in" style="animation-delay:0.2s">
+      Book premium cricket tickets in seconds. Interactive seat selection, instant e-tickets, and real-time seat updates.
+    </p>
+
+    <!-- CTAs -->
+    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in" style="animation-delay:0.3s">
+      <a routerLink="/matches"
+        class="px-8 py-4 bg-green-gradient text-white rounded-2xl font-display font-black text-lg shadow-glow-green hover:shadow-none hover:scale-[0.97] transition-all duration-300 tracking-wider">
+        🏏 BROWSE MATCHES
+      </a>
+      <a [routerLink]="authService.isLoggedIn ? '/profile' : '/register'"
+        class="px-8 py-4 bg-sp-glass border border-sp-border rounded-2xl font-display font-bold text-lg text-sp-text hover:border-sp-green backdrop-blur-glass transition-all duration-300">
+        {{ authService.isLoggedIn ? 'My Tickets →' : 'Get Started Free →' }}
+      </a>
+    </div>
+
+    <!-- Stats -->
+    <div class="flex flex-wrap justify-center gap-8 mt-16 animate-fade-in" style="animation-delay:0.4s">
+      <div *ngFor="let stat of [
+        {value:'50K+', label:'Tickets Sold'},
+        {value:'200+', label:'Matches Covered'},
+        {value:'₹0', label:'Hidden Fees'},
+        {value:'24/7', label:'Support'}
+      ]" class="text-center">
+        <p class="font-display font-black text-3xl text-sp-green">{{ stat.value }}</p>
+        <p class="text-sp-muted text-sm">{{ stat.label }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Features Section -->
+  <div class="relative z-10 max-w-7xl mx-auto px-4 py-20">
+    <h2 class="font-display font-black text-3xl sm:text-4xl text-sp-text text-center mb-12 tracking-wide">
+      WHY <span class="text-sp-green">STADIUMPASS</span>?
+    </h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div *ngFor="let f of [
+        {icon:'🗺️', title:'Interactive Stadium Map', desc:'Choose your exact seat with our real-time SVG circular stadium map. See availability instantly.', color:'text-sp-green', bg:'bg-sp-green/10 border-sp-green/20'},
+        {icon:'⚡', title:'Instant E-Tickets', desc:'Receive scannable QR-coded tickets instantly. Download, print, or show on mobile.', color:'text-sp-blue', bg:'bg-sp-blue/10 border-sp-blue/20'},
+        {icon:'🔒', title:'Secure Payments', desc:'Multiple payment options: Credit Card, Debit Card, UPI, and Wallet with 256-bit encryption.', color:'text-sp-gold', bg:'bg-sp-gold/10 border-sp-gold/20'},
+        {icon:'🔄', title:'Easy Refunds', desc:'Cancel up to 24 hours before the match. Refunds processed to your StadiumPass wallet.', color:'text-sp-red', bg:'bg-sp-red/10 border-sp-red/20'},
+        {icon:'📡', title:'Live Match Updates', desc:'Real-time seat locking prevents double bookings. Live score ticker keeps you updated.', color:'#a855f7', bg:'bg-purple-500/10 border-purple-500/20'},
+        {icon:'👑', title:'VIP Experience', desc:'Premium section access, corporate boxes, and exclusive hospitality packages available.', color:'text-sp-gold', bg:'bg-sp-gold/10 border-sp-gold/20'}
+      ]"
+        class="group p-6 bg-sp-dark border rounded-2xl hover:shadow-glass transition-all duration-300 hover:-translate-y-1"
+        [class]="f.bg">
+        <div class="text-4xl mb-4">{{ f.icon }}</div>
+        <h3 class="font-display font-bold text-xl mb-2" [class]="f.color">{{ f.title }}</h3>
+        <p class="text-sp-muted text-sm leading-relaxed">{{ f.desc }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA Banner -->
+  <div class="relative z-10 max-w-4xl mx-auto px-4 pb-20">
+    <div class="bg-sp-glass border border-sp-green/30 rounded-3xl p-10 text-center backdrop-blur-glass shadow-glow-green">
+      <h2 class="font-display font-black text-3xl text-sp-text mb-4">Ready to experience cricket like never before?</h2>
+      <p class="text-sp-muted mb-8">Join over 50,000 fans who book through StadiumPass every IPL season.</p>
+      <a routerLink="/register" class="inline-block px-10 py-4 bg-green-gradient text-white rounded-2xl font-display font-black text-lg shadow-glow-green hover:shadow-none hover:scale-[0.97] transition-all">
+        CREATE FREE ACCOUNT
+      </a>
+    </div>
+  </div>
+</div>

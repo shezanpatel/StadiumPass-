@@ -1,0 +1,69 @@
+<div class="min-h-screen bg-stadium-gradient flex items-center justify-center px-4 py-12">
+  <div class="absolute inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute top-1/4 left-1/4 w-64 h-64 bg-sp-green/5 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-sp-gold/5 rounded-full blur-3xl"></div>
+  </div>
+
+  <div class="w-full max-w-md relative z-10 animate-fade-in">
+    <div class="text-center mb-8">
+      <a routerLink="/" class="inline-flex items-center gap-3">
+        <div class="w-12 h-12 rounded-2xl bg-green-gradient flex items-center justify-center shadow-glow-green">
+          <span class="text-white text-2xl">🏏</span>
+        </div>
+        <div class="text-left">
+          <h1 class="font-display font-black text-2xl text-sp-text tracking-wider">STADIUM<span class="text-sp-green">PASS</span></h1>
+          <p class="text-sp-muted text-xs tracking-widest uppercase">Cricket Ticket Platform</p>
+        </div>
+      </a>
+    </div>
+
+    <div class="bg-sp-glass backdrop-blur-glass border border-sp-border rounded-3xl p-8 shadow-glass">
+      <h2 class="font-display font-bold text-2xl text-sp-text mb-1">Welcome back</h2>
+      <p class="text-sp-muted text-sm mb-6">Sign in to access your tickets</p>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+        <div class="mb-4">
+          <label class="block text-sp-muted text-xs font-semibold uppercase tracking-wider mb-2">Email</label>
+          <input formControlName="email" type="email" placeholder="you@example.com"
+            class="w-full bg-sp-darker border rounded-xl px-4 py-3 text-sp-text placeholder-sp-muted/50 outline-none transition-all text-sm focus:border-sp-green"
+            [class.border-sp-border]="!emailControl.invalid || !emailControl.touched"
+            [class.border-sp-red]="emailControl.invalid && emailControl.touched" />
+          <p *ngIf="emailControl.invalid && emailControl.touched" class="text-sp-red text-xs mt-1 ml-1">{{ getError(emailControl) }}</p>
+        </div>
+
+        <div class="mb-6">
+          <label class="block text-sp-muted text-xs font-semibold uppercase tracking-wider mb-2">Password</label>
+          <div class="relative">
+            <input formControlName="password" [type]="showPassword ? 'text' : 'password'" placeholder="••••••••"
+              class="w-full bg-sp-darker border rounded-xl px-4 py-3 pr-12 text-sp-text placeholder-sp-muted/50 outline-none transition-all text-sm focus:border-sp-green"
+              [class.border-sp-border]="!passwordControl.invalid || !passwordControl.touched"
+              [class.border-sp-red]="passwordControl.invalid && passwordControl.touched" />
+            <button type="button" (click)="showPassword = !showPassword"
+              class="absolute right-4 top-1/2 -translate-y-1/2 text-sp-muted hover:text-sp-text transition-colors text-lg">
+              {{ showPassword ? '🙈' : '👁️' }}
+            </button>
+          </div>
+          <p *ngIf="passwordControl.invalid && passwordControl.touched" class="text-sp-red text-xs mt-1 ml-1">{{ getError(passwordControl) }}</p>
+        </div>
+
+        <button type="submit" [disabled]="isLoading"
+          class="w-full py-3.5 rounded-xl font-display font-bold text-base tracking-wider transition-all duration-300 bg-green-gradient text-white shadow-glow-green hover:shadow-none hover:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed">
+          <span *ngIf="!isLoading">SIGN IN</span>
+          <span *ngIf="isLoading">Signing in...</span>
+        </button>
+      </form>
+
+      <p class="text-center text-sp-muted text-sm mt-6">
+        Don't have an account?
+        <a routerLink="/register" class="text-sp-green hover:text-sp-green-light font-semibold transition-colors ml-1">Create one</a>
+      </p>
+
+      <!-- Admin login link -->
+      <div class="mt-4 pt-4 border-t border-sp-border/50 text-center">
+        <a routerLink="/admin-login" class="text-sp-muted text-xs hover:text-sp-gold transition-colors">
+          🛡️ Admin? Sign in here
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

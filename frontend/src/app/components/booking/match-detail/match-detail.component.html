@@ -1,0 +1,118 @@
+<div class="min-h-screen bg-stadium-gradient pt-6 pb-24 px-4">
+  <div class="max-w-6xl mx-auto">
+
+    <div *ngIf="isLoading" class="space-y-4">
+      <div class="h-48 skeleton-shimmer rounded-2xl"></div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="h-80 skeleton-shimmer rounded-2xl"></div>
+        <div class="h-80 skeleton-shimmer rounded-2xl"></div>
+      </div>
+    </div>
+
+    <div *ngIf="!isLoading && match" class="animate-fade-in">
+      <a routerLink="/matches" class="inline-flex items-center gap-2 text-sp-muted hover:text-sp-green text-sm mb-6 transition-colors">← Back to Matches</a>
+
+      <!-- Hero Banner -->
+      <div class="bg-sp-dark border border-sp-border rounded-3xl overflow-hidden mb-6">
+        <div class="relative p-6 bg-gradient-to-br from-sp-surface to-sp-darker">
+          <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+            <div class="flex items-center gap-2">
+              <span class="px-3 py-1 bg-sp-gold/20 border border-sp-gold/40 text-sp-gold text-xs font-bold rounded-lg">{{ match.tournament }}</span>
+              <span *ngIf="match.matchNumber" class="text-sp-muted text-xs">Match #{{ match.matchNumber }}</span>
+            </div>
+            <div class="text-sp-muted text-sm">📅 {{ match.dateTime | date:'EEEE, MMMM d, y · h:mm a' }}</div>
+          </div>
+
+          <div class="flex items-center justify-center gap-8 py-4">
+            <div class="text-center">
+              <div class="w-20 h-20 mx-auto bg-sp-surface rounded-full border-2 border-sp-border flex items-center justify-center text-4xl mb-2">{{ match.team1Logo || '🏏' }}</div>
+              <h2 class="font-display font-black text-2xl text-sp-text">{{ match.team1 }}</h2>
+            </div>
+            <div class="text-center">
+              <p class="font-display font-black text-3xl text-sp-muted">VS</p>
+            </div>
+            <div class="text-center">
+              <div class="w-20 h-20 mx-auto bg-sp-surface rounded-full border-2 border-sp-border flex items-center justify-center text-4xl mb-2">{{ match.team2Logo || '🏏' }}</div>
+              <h2 class="font-display font-black text-2xl text-sp-text">{{ match.team2 }}</h2>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-4 justify-center mt-2 text-sm text-sp-muted">
+            <span>📍 {{ venueName }}</span>
+            <span *ngIf="match.weather">🌡️ {{ match.weather.temperature }}°C · {{ match.weather.condition }}</span>
+            <span>🚪 Gates: {{ match.gates }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Stadium Map -->
+        <div class="lg:col-span-2 bg-sp-dark border border-sp-border rounded-3xl p-6">
+          <h3 class="font-display font-bold text-xl text-sp-text mb-4">SELECT YOUR SEATS</h3>
+          <app-stadium-map [match]="match" [bookedSeatIds]="bookedSeatIds" (seatsSelected)="onSeatsSelected($event)"/>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="space-y-4">
+          <!-- Pricing -->
+          <div class="bg-sp-dark border border-sp-border rounded-2xl p-5">
+            <h4 class="font-display font-bold text-sp-text mb-3 uppercase tracking-wider text-sm">Ticket Pricing</h4>
+            <div class="space-y-2">
+              <div class="flex justify-between items-center py-2 border-b border-sp-border">
+                <span class="text-sp-muted text-sm">🟢 General</span>
+                <span class="font-display font-bold text-sm text-sp-green">₹{{ match.ticketPricing.general | number }}</span>
+              </div>
+              <div class="flex justify-between items-center py-2 border-b border-sp-border">
+                <span class="text-sp-muted text-sm">🔵 Premium</span>
+                <span class="font-display font-bold text-sm text-sp-blue">₹{{ match.ticketPricing.premium | number }}</span>
+              </div>
+              <div class="flex justify-between items-center py-2 border-b border-sp-border">
+                <span class="text-sp-muted text-sm">⭐ VIP</span>
+                <span class="font-display font-bold text-sm text-sp-gold">₹{{ match.ticketPricing.vip | number }}</span>
+              </div>
+              <div class="flex justify-between items-center py-2">
+                <span class="text-sp-muted text-sm">💎 Corporate</span>
+                <span class="font-display font-bold text-sm" style="color:#a855f7">₹{{ match.ticketPricing.corporate | number }}</span>
+              </div>
+            </div>
+            <p *ngIf="match.ticketPricing.dynamicMultiplier > 1"
+              class="text-sp-red text-xs mt-2 bg-sp-red/10 rounded-lg px-2 py-1">
+              🔥 High demand! Prices increased {{ getDynamicPercent(match.ticketPricing.dynamicMultiplier) }}%
+            </p>
+          </div>
+
+          <!-- Star Players -->
+          <div *ngIf="match.starPlayers?.length" class="bg-sp-dark border border-sp-border rounded-2xl p-5">
+            <h4 class="font-display font-bold text-sp-text mb-3 uppercase tracking-wider text-sm">⭐ Star Players</h4>
+            <div class="space-y-3">
+              <div *ngFor="let player of match.starPlayers.slice(0, 4)"
+                class="flex items-center gap-3 p-2 bg-sp-surface rounded-xl">
+                <div class="w-10 h-10 rounded-full bg-sp-darker border border-sp-border flex items-center justify-center text-lg">
+                  {{ getPlayerIcon(player.role) }}
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="font-semibold text-sp-text text-sm truncate">{{ player.name }}</p>
+                  <p class="text-sp-muted text-xs">{{ player.team }} · {{ player.role }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CTA -->
+          <div class="bg-sp-dark border border-sp-border rounded-2xl p-5 sticky top-4">
+            <div class="flex justify-between mb-3">
+              <span class="text-sp-muted">{{ selectedSeats.length }} seat(s)</span>
+              <span class="font-display font-bold text-sp-green text-xl">₹{{ totalPrice | number }}</span>
+            </div>
+            <button (click)="proceedToCheckout()"
+              [disabled]="selectedSeats.length === 0"
+              class="w-full py-3.5 bg-green-gradient text-white rounded-xl font-display font-bold tracking-wider shadow-glow-green hover:shadow-none hover:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:scale-100">
+              PROCEED TO CHECKOUT →
+            </button>
+            <p class="text-sp-muted text-xs text-center mt-2">Select seats from the map to continue</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

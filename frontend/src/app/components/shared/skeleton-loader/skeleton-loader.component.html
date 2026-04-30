@@ -1,0 +1,26 @@
+<ng-container *ngFor="let i of items">
+  <!-- Card skeleton -->
+  <div *ngIf="type === 'card'" class="bg-sp-dark border border-sp-border rounded-2xl overflow-hidden">
+    <div class="h-40 skeleton-shimmer"></div>
+    <div class="p-5 space-y-3">
+      <div class="h-4 skeleton-shimmer rounded-lg w-3/4"></div>
+      <div class="h-3 skeleton-shimmer rounded-lg w-1/2"></div>
+      <div class="h-3 skeleton-shimmer rounded-lg w-2/3"></div>
+      <div class="h-10 skeleton-shimmer rounded-xl mt-4"></div>
+    </div>
+  </div>
+  <!-- List skeleton -->
+  <div *ngIf="type === 'list'" class="bg-sp-dark border border-sp-border rounded-2xl p-4 flex items-center gap-4">
+    <div class="w-12 h-12 rounded-full skeleton-shimmer flex-shrink-0"></div>
+    <div class="flex-1 space-y-2">
+      <div class="h-4 skeleton-shimmer rounded-lg w-1/2"></div>
+      <div class="h-3 skeleton-shimmer rounded-lg w-3/4"></div>
+    </div>
+  </div>
+  <!-- Text skeleton -->
+  <div *ngIf="type === 'text'" class="space-y-2">
+    <div class="h-4 skeleton-shimmer rounded-lg w-full"></div>
+    <div class="h-4 skeleton-shimmer rounded-lg w-5/6"></div>
+    <div class="h-4 skeleton-shimmer rounded-lg w-4/5"></div>
+  </div>
+</ng-container>

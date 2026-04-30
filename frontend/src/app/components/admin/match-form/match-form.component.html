@@ -1,0 +1,139 @@
+<div class="min-h-screen bg-stadium-gradient pt-6 pb-24 px-4">
+  <div class="max-w-3xl mx-auto">
+    <a routerLink="/admin" class="inline-flex items-center gap-2 text-sp-muted hover:text-sp-green text-sm mb-6 transition-colors">← Admin Dashboard</a>
+    <h1 class="font-display font-black text-3xl text-sp-text mb-6">{{ isEditing ? 'EDIT MATCH' : 'NEW MATCH' }}</h1>
+
+    <form [formGroup]="matchForm" (ngSubmit)="onSubmit()" class="bg-sp-dark border border-sp-border rounded-2xl p-6 space-y-5">
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+        <!-- Match Title -->
+        <div class="sm:col-span-2">
+          <label class="block text-sp-muted text-xs uppercase tracking-wider mb-1.5">Match Title</label>
+          <input formControlName="title" type="text" placeholder="e.g. IPL 2024 Final"
+            class="w-full bg-sp-darker border border-sp-border rounded-xl px-4 py-3 text-sp-text text-sm outline-none focus:border-sp-green transition-colors"/>
+          <p *ngIf="matchForm.get('title')!.invalid && matchForm.get('title')!.touched"
+            class="text-sp-red text-xs mt-1">Match title is required.</p>
+        </div>
+
+        <!-- Team 1 -->
+        <div>
+          <label class="block text-sp-muted text-xs uppercase tracking-wider mb-1.5">Team 1</label>
+          <input formControlName="team1" type="text" placeholder="Mumbai Indians"
+            class="w-full bg-sp-darker border border-sp-border rounded-xl px-4 py-3 text-sp-text text-sm outline-none focus:border-sp-green transition-colors"/>
+          <p *ngIf="matchForm.get('team1')!.invalid && matchForm.get('team1')!.touched"
+            class="text-sp-red text-xs mt-1">Team 1 is required.</p>
+        </div>
+
+        <!-- Team 2 -->
+        <div>
+          <label class="block text-sp-muted text-xs uppercase tracking-wider mb-1.5">Team 2</label>
+          <input formControlName="team2" type="text" placeholder="Chennai Super Kings"
+            class="w-full bg-sp-darker border border-sp-border rounded-xl px-4 py-3 text-sp-text text-sm outline-none focus:border-sp-green transition-colors"/>
+          <p *ngIf="matchForm.get('team2')!.invalid && matchForm.get('team2')!.touched"
+            class="text-sp-red text-xs mt-1">Team 2 is required.</p>
+        </div>
+
+        <!-- Tournament -->
+        <div>
+          <label class="block text-sp-muted text-xs uppercase tracking-wider mb-1.5">Tournament</label>
+          <select formControlName="tournament"
+            class="w-full bg-sp-darker border border-sp-border rounded-xl px-4 py-3 text-sp-text text-sm outline-none focus:border-sp-green transition-colors">
+            <option *ngFor="let t of tournaments" [value]="t">{{ t }}</option>
+          </select>
+        </div>
+
+        <!-- Date & Time — with min set to now, past dates blocked -->
+        <div>
+          <label class="block text-sp-muted text-xs uppercase tracking-wider mb-1.5">Date & Time</label>
+          <input formControlName="dateTime"
+            type="datetime-local"
+            [min]="minDateTime"
+            class="w-full bg-sp-darker border rounded-xl px-4 py-3 text-sp-text text-sm outline-none transition-colors"
+            [class.border-sp-red]="dateTimeControl.invalid && dateTimeControl.touched"
+            [class.border-sp-border]="!dateTimeControl.invalid || !dateTimeControl.touched"
+            [class.focus:border-sp-green]="dateTimeControl.valid"/>
+          <p *ngIf="dateTimeControl.invalid && dateTimeControl.touched"
+            class="text-sp-red text-xs mt-1">{{ getDateError() }}</p>
+          <p *ngIf="dateTimeControl.valid && dateTimeControl.value"
+            class="text-sp-green text-xs mt-1">✓ Valid future date selected.</p>
+        </div>
+
+        <!-- Stadium ID -->
+        <div>
+          <label class="block text-sp-muted text-xs uppercase tracking-wider mb-1.5">Stadium ID (MongoDB _id)</label>
+          <input formControlName="venue" type="text" placeholder="6789abc..."
+            class="w-full bg-sp-darker border border-sp-border rounded-xl px-4 py-3 text-sp-text text-sm outline-none focus:border-sp-green transition-colors font-mono"/>
+          <p *ngIf="matchForm.get('venue')!.invalid && matchForm.get('venue')!.touched"
+            class="text-sp-red text-xs mt-1">Stadium ID is required.</p>
+        </div>
+
+        <!-- Total Seats -->
+        <div>
+          <label class="block text-sp-muted text-xs uppercase tracking-wider mb-1.5">Total Seats</label>
+          <input formControlName="totalSeats" type="number" min="1000"
+            class="w-full bg-sp-darker border border-sp-border rounded-xl px-4 py-3 text-sp-text text-sm outline-none focus:border-sp-green transition-colors"/>
+          <p *ngIf="matchForm.get('totalSeats')!.invalid && matchForm.get('totalSeats')!.touched"
+            class="text-sp-red text-xs mt-1">Minimum 1,000 seats required.</p>
+        </div>
+
+      </div>
+
+      <!-- Ticket Pricing -->
+      <div>
+        <h3 class="font-display font-bold text-sp-text mb-3 uppercase tracking-wider text-sm">💰 Ticket Pricing (Base ₹)</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div *ngFor="let tier of [
+            {key:'general',   label:'General'},
+            {key:'premium',   label:'Premium'},
+            {key:'vip',       label:'VIP'},
+            {key:'corporate', label:'Corporate'}
+          ]">
+            <label class="block text-sp-muted text-xs uppercase tracking-wider mb-1.5">{{ tier.label }}</label>
+            <input [formControlName]="tier.key" type="number" min="0" placeholder="₹"
+              class="w-full bg-sp-darker border border-sp-border rounded-xl px-3 py-3 text-sp-text text-sm outline-none focus:border-sp-green transition-colors"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- Weather -->
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sp-muted text-xs uppercase tracking-wider mb-1.5">Weather Condition</label>
+          <input formControlName="weatherCondition" type="text" placeholder="Clear, Cloudy, Rainy..."
+            class="w-full bg-sp-darker border border-sp-border rounded-xl px-4 py-3 text-sp-text text-sm outline-none focus:border-sp-green transition-colors"/>
+        </div>
+        <div>
+          <label class="block text-sp-muted text-xs uppercase tracking-wider mb-1.5">Temperature (°C)</label>
+          <input formControlName="weatherTemperature" type="number"
+            class="w-full bg-sp-darker border border-sp-border rounded-xl px-4 py-3 text-sp-text text-sm outline-none focus:border-sp-green transition-colors"/>
+        </div>
+      </div>
+
+      <!-- Featured toggle -->
+      <div class="flex items-center gap-3">
+        <input formControlName="isFeatured" type="checkbox" id="featured" class="w-4 h-4 accent-sp-green"/>
+        <label for="featured" class="text-sp-muted text-sm">Mark as Featured Match (shown on home page)</label>
+      </div>
+
+      <!-- Form-level validation summary -->
+      <div *ngIf="matchForm.invalid && matchForm.touched"
+        class="bg-sp-red/10 border border-sp-red/40 rounded-xl px-4 py-3">
+        <p class="text-sp-red text-sm font-semibold">⚠️ Please fix the errors above before submitting.</p>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="flex gap-3 pt-2">
+        <a routerLink="/admin"
+          class="flex-1 py-3.5 border border-sp-border rounded-xl text-sp-muted text-center font-semibold text-sm hover:text-sp-text transition-all">
+          Cancel
+        </a>
+        <button type="submit" [disabled]="isLoading || matchForm.invalid"
+          class="flex-1 py-3.5 bg-green-gradient text-white rounded-xl font-display font-bold text-sm shadow-glow-green hover:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+          {{ isLoading ? 'Saving...' : (isEditing ? 'UPDATE MATCH' : 'CREATE MATCH') }}
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

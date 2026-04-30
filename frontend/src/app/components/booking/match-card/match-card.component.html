@@ -1,0 +1,88 @@
+<div class="group bg-sp-dark border border-sp-border rounded-2xl overflow-hidden hover:border-sp-green/50 hover:shadow-glass transition-all duration-300 cursor-pointer"
+     [routerLink]="['/matches', match._id]">
+
+  <!-- Thumbnail / Header -->
+  <div class="relative h-36 bg-gradient-to-br from-sp-surface to-sp-darker flex items-center justify-center overflow-hidden">
+    <img *ngIf="match.thumbnail" [src]="match.thumbnail" [alt]="match.title"
+      class="w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-opacity duration-300"/>
+    <div class="absolute inset-0 bg-hero-gradient"></div>
+
+    <!-- Tournament badge -->
+    <div class="absolute top-3 left-3">
+      <span class="px-2.5 py-1 bg-sp-gold/20 border border-sp-gold/40 text-sp-gold text-xs font-bold rounded-lg font-display tracking-wider">
+        {{ match.tournament }}
+      </span>
+    </div>
+
+    <!-- Status badge -->
+    <div class="absolute top-3 right-3">
+      <span class="px-2.5 py-1 border text-xs font-bold rounded-lg font-display capitalize" [class]="statusBadgeClass">
+        <span *ngIf="match.status === 'live'" class="inline-block w-1.5 h-1.5 bg-sp-red rounded-full mr-1"></span>
+        {{ match.status }}
+      </span>
+    </div>
+
+    <!-- Teams -->
+    <div class="relative flex items-center gap-4 px-4">
+      <div class="text-center flex-1">
+        <div class="w-12 h-12 mx-auto bg-sp-surface rounded-full border-2 border-sp-border flex items-center justify-center text-2xl mb-1">
+          {{ match.team1Logo || '🏏' }}
+        </div>
+        <p class="font-display font-bold text-sp-text text-sm leading-tight">{{ match.team1 }}</p>
+      </div>
+      <div class="text-center">
+        <span class="font-display font-black text-sp-muted text-lg">VS</span>
+        <p *ngIf="match.status === 'live'" class="text-sp-red text-xs font-bold">LIVE</p>
+      </div>
+      <div class="text-center flex-1">
+        <div class="w-12 h-12 mx-auto bg-sp-surface rounded-full border-2 border-sp-border flex items-center justify-center text-2xl mb-1">
+          {{ match.team2Logo || '🏏' }}
+        </div>
+        <p class="font-display font-bold text-sp-text text-sm leading-tight">{{ match.team2 }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card Body -->
+  <div class="p-4">
+    <!-- Date & Venue -->
+    <div class="flex items-center gap-2 text-sp-muted text-xs mb-1">
+      <span>📅</span>
+      <span>{{ match.dateTime | date:'EEE, dd MMM yyyy · h:mm a' }}</span>
+    </div>
+    <div class="flex items-center gap-2 text-sp-muted text-xs mb-3">
+      <span>📍</span>
+      <span>{{ venueName }}<span *ngIf="venueCity">, {{ venueCity }}</span></span>
+    </div>
+
+    <!-- Weather -->
+    <div *ngIf="match.weather" class="flex items-center gap-3 bg-sp-surface rounded-xl px-3 py-2 mb-3">
+      <span class="text-lg">{{ match.weather.icon }}</span>
+      <span class="text-sp-muted text-xs">{{ match.weather.condition }} · {{ match.weather.temperature }}°C</span>
+      <span class="text-sp-muted text-xs ml-auto">💧 {{ match.weather.humidity }}%</span>
+    </div>
+
+    <!-- Availability bar -->
+    <div class="mb-4">
+      <div class="flex justify-between text-xs mb-1.5">
+        <span class="text-sp-muted">Availability</span>
+        <span class="font-semibold" [style.color]="availabilityColor">{{ availabilityPercent }}%</span>
+      </div>
+      <div class="h-1.5 bg-sp-darker rounded-full overflow-hidden">
+        <div class="h-full rounded-full transition-all duration-500" [style.width.%]="availabilityPercent" [style.background]="availabilityColor"></div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="flex items-center justify-between">
+      <div>
+        <span class="text-sp-muted text-xs">From</span>
+        <p class="font-display font-bold text-sp-green text-lg">₹{{ minPrice | number }}</p>
+      </div>
+      <button class="px-5 py-2 bg-green-gradient text-white rounded-xl font-display font-bold text-sm shadow-glow-green hover:shadow-none hover:scale-[0.97] transition-all duration-200"
+        [disabled]="match.status === 'cancelled' || match.status === 'completed'">
+        {{ match.status === 'upcoming' || match.status === 'live' ? 'BOOK NOW' : (match.status | titlecase) }}
+      </button>
+    </div>
+  </div>
+</div>

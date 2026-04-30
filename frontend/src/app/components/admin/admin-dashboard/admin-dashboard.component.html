@@ -1,0 +1,321 @@
+<div class="min-h-screen bg-stadium-gradient pt-6 pb-24 px-4">
+  <div class="max-w-7xl mx-auto">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="font-display font-black text-4xl text-sp-text tracking-wide">ADMIN <span class="text-sp-gold">COMMAND CENTER</span></h1>
+        <p class="text-sp-muted">Manage matches, bookings, users, and revenue</p>
+      </div>
+      <a routerLink="/admin/matches/new"
+        class="px-5 py-2.5 bg-green-gradient text-white rounded-xl font-display font-bold text-sm shadow-glow-green hover:shadow-none transition-all flex items-center gap-2">
+        ➕ New Match
+      </a>
+    </div>
+
+    <!-- Stats row -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div class="bg-sp-dark border border-sp-border rounded-2xl p-4">
+        <div class="flex items-center gap-3">
+          <div class="text-3xl">💰</div>
+          <div>
+            <p class="text-sp-muted text-xs">Total Revenue</p>
+            <p class="font-display font-bold text-xl text-sp-green">₹{{ totalRevenue | number }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="bg-sp-dark border border-sp-border rounded-2xl p-4">
+        <div class="flex items-center gap-3">
+          <div class="text-3xl">🎫</div>
+          <div>
+            <p class="text-sp-muted text-xs">Total Bookings</p>
+            <p class="font-display font-bold text-xl text-sp-blue">{{ bookings.length | number }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="bg-sp-dark border border-sp-border rounded-2xl p-4">
+        <div class="flex items-center gap-3">
+          <div class="text-3xl">🏏</div>
+          <div>
+            <p class="text-sp-muted text-xs">Active Matches</p>
+            <p class="font-display font-bold text-xl text-sp-gold">{{ matches.length | number }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="bg-sp-dark border border-sp-border rounded-2xl p-4">
+        <div class="flex items-center gap-3">
+          <div class="text-3xl">🔄</div>
+          <div>
+            <p class="text-sp-muted text-xs">Refund Requests</p>
+            <p class="font-display font-bold text-xl text-sp-red">{{ refundRequests.length | number }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex gap-2 mb-6 bg-sp-dark border border-sp-border rounded-2xl p-1.5 overflow-x-auto">
+      <button (click)="setTab('matches')"
+        [class]="activeTab === 'matches' ? 'flex-shrink-0 px-4 py-2.5 rounded-xl bg-sp-gold text-sp-navy font-display font-bold text-sm' : 'flex-shrink-0 px-4 py-2.5 rounded-xl text-sp-muted hover:text-sp-text font-display font-semibold text-sm'">
+        🏏 Matches
+      </button>
+      <button (click)="setTab('bookings')"
+        [class]="activeTab === 'bookings' ? 'flex-shrink-0 px-4 py-2.5 rounded-xl bg-sp-gold text-sp-navy font-display font-bold text-sm' : 'flex-shrink-0 px-4 py-2.5 rounded-xl text-sp-muted hover:text-sp-text font-display font-semibold text-sm'">
+        🎫 Bookings
+        <span class="ml-1.5 bg-sp-surface border border-sp-border text-sp-muted text-xs px-1.5 py-0.5 rounded-full">{{ bookings.length }}</span>
+      </button>
+      <button (click)="setTab('users')"
+        [class]="activeTab === 'users' ? 'flex-shrink-0 px-4 py-2.5 rounded-xl bg-sp-gold text-sp-navy font-display font-bold text-sm' : 'flex-shrink-0 px-4 py-2.5 rounded-xl text-sp-muted hover:text-sp-text font-display font-semibold text-sm'">
+        👥 Users
+      </button>
+      <button (click)="setTab('refunds')"
+        [class]="activeTab === 'refunds' ? 'flex-shrink-0 px-4 py-2.5 rounded-xl bg-sp-gold text-sp-navy font-display font-bold text-sm' : 'flex-shrink-0 px-4 py-2.5 rounded-xl text-sp-muted hover:text-sp-text font-display font-semibold text-sm'">
+        🔄 Refunds
+        <span *ngIf="refundRequests.length > 0" class="ml-1.5 bg-sp-red text-white text-xs px-1.5 py-0.5 rounded-full">{{ refundRequests.length }}</span>
+      </button>
+      <button (click)="setTab('analytics')"
+        [class]="activeTab === 'analytics' ? 'flex-shrink-0 px-4 py-2.5 rounded-xl bg-sp-gold text-sp-navy font-display font-bold text-sm' : 'flex-shrink-0 px-4 py-2.5 rounded-xl text-sp-muted hover:text-sp-text font-display font-semibold text-sm'">
+        📊 Analytics
+      </button>
+    </div>
+
+    <!-- ══ MATCHES TAB ══ -->
+    <div *ngIf="activeTab === 'matches'" class="space-y-3">
+      <div *ngFor="let m of matches" class="bg-sp-dark border border-sp-border rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex-1">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-xs bg-sp-gold/20 text-sp-gold border border-sp-gold/30 px-2 py-0.5 rounded font-bold">{{ m.tournament }}</span>
+            <span class="text-xs capitalize px-2 py-0.5 rounded border"
+              [class]="m.status === 'live' ? 'text-sp-red border-sp-red/40 bg-sp-red/10 font-bold' : m.status === 'upcoming' ? 'text-sp-green border-sp-green/40' : 'text-sp-muted border-sp-border'">
+              {{ m.status === 'live' ? '🔴 LIVE' : m.status }}
+            </span>
+          </div>
+          <h4 class="font-display font-bold text-sp-text">{{ m.team1 }} vs {{ m.team2 }}</h4>
+          <p class="text-sp-muted text-xs">{{ m.dateTime | date:'dd MMM yyyy, h:mm a' }}</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="text-right mr-2">
+            <p class="text-sp-muted text-xs">Seats Sold</p>
+            <p class="font-bold text-sp-text text-sm">{{ m.bookedSeats }}/{{ m.totalSeats }}</p>
+          </div>
+          <a [routerLink]="['/admin/matches', m._id, 'edit']"
+            class="px-3 py-1.5 bg-sp-surface border border-sp-border rounded-xl text-sp-muted hover:text-sp-text text-xs font-semibold transition-all">Edit</a>
+          <button (click)="deleteMatch(m._id)"
+            class="px-3 py-1.5 bg-sp-red/10 border border-sp-red/30 rounded-xl text-sp-red hover:bg-sp-red/20 text-xs font-semibold transition-all">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ BOOKINGS TAB ══ -->
+    <div *ngIf="activeTab === 'bookings'">
+
+      <!-- Search + filter bar -->
+      <div class="flex flex-wrap gap-3 mb-5">
+        <input
+          type="text"
+          [(ngModel)]="bookingSearch"
+          (input)="onBookingSearch()"
+          placeholder="Search by ref, user, or match..."
+          class="flex-1 min-w-48 bg-sp-dark border border-sp-border rounded-xl px-4 py-2.5 text-sp-text placeholder-sp-muted/50 text-sm outline-none focus:border-sp-gold transition-colors" />
+
+        <div class="flex gap-2 flex-wrap">
+          <button *ngFor="let s of ['all','confirmed','pending','refund_requested','refunded','cancelled']"
+            (click)="onStatusFilter(s)"
+            [class]="bookingStatusFilter === s
+              ? 'px-3 py-2 rounded-xl text-xs font-bold bg-sp-gold text-sp-navy'
+              : 'px-3 py-2 rounded-xl text-xs font-semibold bg-sp-dark border border-sp-border text-sp-muted hover:text-sp-text'">
+            {{ s === 'all' ? 'All' : s === 'refund_requested' ? 'Refund Req.' : (s | titlecase) }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Result count -->
+      <p class="text-sp-muted text-xs mb-3">Showing {{ filteredBookings.length }} of {{ bookings.length }} bookings</p>
+
+      <!-- Empty state -->
+      <div *ngIf="filteredBookings.length === 0" class="text-center py-16">
+        <div class="text-5xl mb-3">🎫</div>
+        <p class="text-sp-muted">No bookings found</p>
+      </div>
+
+      <!-- Booking cards -->
+      <div class="space-y-3">
+        <div *ngFor="let b of filteredBookings"
+          class="bg-sp-dark border border-sp-border rounded-2xl p-5 hover:border-sp-gold/30 transition-colors">
+
+          <!-- Top row: ref + status + amount -->
+          <div class="flex flex-wrap items-start justify-between gap-3 mb-4">
+            <div>
+              <span class="font-mono text-sp-gold text-sm font-bold">{{ b.bookingRef }}</span>
+              <span class="ml-3 text-xs px-2 py-0.5 rounded-lg border font-semibold uppercase" [class]="statusColor(b.status)">
+                {{ b.status === 'refund_requested' ? 'Refund Req.' : b.status }}
+              </span>
+            </div>
+            <p class="font-display font-bold text-sp-green text-xl">₹{{ b.totalAmount | number }}</p>
+          </div>
+
+          <!-- Info grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+            <!-- User -->
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-full bg-sp-surface border border-sp-border flex items-center justify-center text-base flex-shrink-0">👤</div>
+              <div>
+                <p class="text-sp-text text-sm font-semibold">{{ getUserName(b) }}</p>
+                <p class="text-sp-muted text-xs">{{ getUserEmail(b) }}</p>
+              </div>
+            </div>
+
+            <!-- Match -->
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-full bg-sp-surface border border-sp-border flex items-center justify-center text-base flex-shrink-0">🏏</div>
+              <div>
+                <p class="text-sp-text text-sm font-semibold">{{ getMatchTitle(b) }}</p>
+                <p class="text-sp-muted text-xs">{{ getMatchDate(b) | date:'dd MMM yyyy, h:mm a' }}</p>
+              </div>
+            </div>
+
+            <!-- Booking details -->
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-full bg-sp-surface border border-sp-border flex items-center justify-center text-base flex-shrink-0">🗓️</div>
+              <div>
+                <p class="text-sp-text text-sm font-semibold">Booked {{ b.createdAt | date:'dd MMM yyyy' }}</p>
+                <p class="text-sp-muted text-xs">{{ b.createdAt | date:'h:mm a' }} · {{ b.payment.method | titlecase }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Seats -->
+          <div class="mt-4 pt-4 border-t border-sp-border/50">
+            <p class="text-sp-muted text-xs mb-2 font-semibold uppercase tracking-wider">Seats ({{ b.seats.length }})</p>
+            <div class="flex flex-wrap gap-2">
+              <span *ngFor="let seat of b.seats"
+                class="text-xs px-2.5 py-1 rounded-lg bg-sp-surface border border-sp-border text-sp-text font-mono">
+                {{ seat.section | uppercase }}-{{ seat.row }}-{{ seat.number }}
+                <span class="text-sp-muted ml-1">{{ seat.tier }}</span>
+                <span class="text-sp-green ml-1">₹{{ seat.price | number }}</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Price breakdown -->
+          <div class="mt-3 flex flex-wrap gap-4 text-xs text-sp-muted">
+            <span>Subtotal: <span class="text-sp-text">₹{{ b.subtotal | number }}</span></span>
+            <span>Conv. Fee: <span class="text-sp-text">₹{{ b.convenienceFee | number }}</span></span>
+            <span>GST: <span class="text-sp-text">₹{{ b.taxes | number }}</span></span>
+            <span class="text-sp-green font-semibold">Total: ₹{{ b.totalAmount | number }}</span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ USERS TAB ══ -->
+    <div *ngIf="activeTab === 'users'" class="space-y-3">
+      <div *ngFor="let u of users" class="bg-sp-dark border border-sp-border rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-sp-surface border border-sp-border flex items-center justify-center text-lg">
+            {{ u.role === 'admin' ? '🛡️' : '👤' }}
+          </div>
+          <div>
+            <p class="font-semibold text-sp-text text-sm">{{ u.name }}</p>
+            <p class="text-sp-muted text-xs">{{ u.email }}</p>
+            <p class="text-sp-muted text-xs">Wallet: <span class="text-sp-green">₹{{ u.walletBalance | number }}</span></p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="text-xs px-2 py-0.5 rounded-lg border font-bold uppercase"
+            [class]="u.role === 'admin' ? 'text-sp-gold border-sp-gold/40 bg-sp-gold/10' : 'text-sp-muted border-sp-border'">
+            {{ u.role }}
+          </span>
+          <span class="text-xs px-2 py-0.5 rounded-lg border"
+            [class]="u.isActive ? 'text-sp-green border-sp-green/40 bg-sp-green/10' : 'text-sp-red border-sp-red/40 bg-sp-red/10'">
+            {{ u.isActive ? 'Active' : 'Banned' }}
+          </span>
+          <button (click)="toggleUserStatus(u)"
+            class="px-3 py-1.5 text-xs font-semibold rounded-xl border border-sp-border text-sp-muted hover:text-sp-text hover:border-sp-green transition-all">
+            {{ u.isActive ? 'Deactivate' : 'Activate' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ REFUNDS TAB ══ -->
+    <div *ngIf="activeTab === 'refunds'">
+      <div *ngIf="refundRequests.length === 0" class="text-center py-16">
+        <div class="text-5xl mb-3">✅</div>
+        <p class="text-sp-muted">No pending refund requests</p>
+      </div>
+      <div class="space-y-3">
+        <div *ngFor="let b of refundRequests" class="bg-sp-dark border border-sp-gold/30 rounded-2xl p-5">
+          <div class="flex flex-wrap items-start justify-between gap-3 mb-4">
+            <div>
+              <p class="font-mono text-sp-gold text-sm font-bold">{{ b.bookingRef }}</p>
+              <p class="font-semibold text-sp-text mt-1">{{ getUserName(b) }}</p>
+              <p class="text-sp-muted text-xs">{{ getUserEmail(b) }}</p>
+            </div>
+            <div class="text-right">
+              <p class="font-display font-bold text-sp-green text-xl">₹{{ getRefundAmount(b) | number }}</p>
+              <div class="flex gap-2 mt-2">
+                <button (click)="processRefund(b._id, 'approve')"
+                  class="px-3 py-1.5 bg-sp-green/20 border border-sp-green/40 text-sp-green rounded-xl text-xs font-bold hover:bg-sp-green/30 transition-all">
+                  ✓ Approve
+                </button>
+                <button (click)="processRefund(b._id, 'reject')"
+                  class="px-3 py-1.5 bg-sp-red/10 border border-sp-red/30 text-sp-red rounded-xl text-xs font-bold hover:bg-sp-red/20 transition-all">
+                  ✗ Reject
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            <div>
+              <p class="text-sp-muted">Match</p>
+              <p class="text-sp-text font-semibold">{{ getMatchTitle(b) }}</p>
+            </div>
+            <div>
+              <p class="text-sp-muted">Reason</p>
+              <p class="text-sp-text">{{ b.refund.reason || '—' }}</p>
+            </div>
+            <div>
+              <p class="text-sp-muted">Booked on</p>
+              <p class="text-sp-text">{{ b.createdAt | date:'dd MMM yyyy, h:mm a' }}</p>
+            </div>
+            <div>
+              <p class="text-sp-muted">Requested on</p>
+              <p class="text-sp-text">{{ getRefundRequestedAt(b) | date:'dd MMM yyyy, h:mm a' }}</p>
+            </div>
+          </div>
+          <!-- Seats -->
+          <div class="mt-3 pt-3 border-t border-sp-border/50 flex flex-wrap gap-2">
+            <span *ngFor="let seat of b.seats"
+              class="text-xs px-2 py-0.5 rounded bg-sp-surface border border-sp-border text-sp-muted font-mono">
+              {{ seat.section | uppercase }}-{{ seat.row }}-{{ seat.number }} ({{ seat.tier }})
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ANALYTICS TAB ══ -->
+    <div *ngIf="activeTab === 'analytics'">
+      <div class="bg-sp-dark border border-sp-border rounded-2xl p-6">
+        <h3 class="font-display font-bold text-sp-text text-xl mb-6">Revenue by Month</h3>
+        <div class="space-y-3">
+          <div *ngFor="let d of revenueData" class="flex items-center gap-4">
+            <span class="text-sp-muted text-sm w-20 shrink-0">{{ d._id }}</span>
+            <div class="flex-1 bg-sp-darker rounded-full h-6 overflow-hidden">
+              <div class="h-full bg-green-gradient rounded-full flex items-center px-3 min-w-[60px]"
+                [style.width.%]="getRevenuePercent(d.revenue)">
+                <span class="text-white text-xs font-bold whitespace-nowrap">₹{{ d.revenue | number }}</span>
+              </div>
+            </div>
+            <span class="text-sp-muted text-xs w-24 text-right shrink-0">{{ d.bookings }} bookings</span>
+          </div>
+          <div *ngIf="revenueData.length === 0" class="text-center py-8 text-sp-muted">No analytics data yet.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
